@@ -6,7 +6,7 @@ This project demonstrates how to build a simple, local-first AI chatbot that ans
 
 ---
 
-## 🧠 What this project does
+## What this project does
 
 - Loads company information from local documents
 - Splits text into chunks
@@ -18,7 +18,7 @@ This project demonstrates how to build a simple, local-first AI chatbot that ans
 
 ---
 
-## 🧱 Tech Stack
+## Tech Stack
 
 - **Python 3.11**
 - **FastAPI** – REST API framework
@@ -31,7 +31,7 @@ This project demonstrates how to build a simple, local-first AI chatbot that ans
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 promptior-rag-chatbot/
@@ -40,17 +40,17 @@ promptior-rag-chatbot/
 │   ├── main.py        # FastAPI app entrypoint
 │   ├── rag.py         # RAG pipeline definition
 │   ├── loaders.py     # Document loading logic
-│   └── docs/          # Company documents (source of truth)
+│   └── docs/          # Company documents
 │
 ├── .venv/             # Python virtual environment
-├── start.sh           # Startup script (npm start equivalent)
+├── start.sh           # Startup script
 ├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## ⚙️ Prerequisites
+## Prerequisites
 
 - **Python 3.11+**
 - **Ollama installed** → [https://ollama.com](https://ollama.com)
@@ -63,9 +63,9 @@ ollama pull llama2
 
 ---
 
-## 🚀 Running the project
+## Running the project
 
-### 1️⃣ Create and activate virtual environment
+### Create and activate virtual environment
 
 ```bash
 python -m venv .venv
@@ -78,13 +78,13 @@ source .venv/bin/activate # Linux
 
 ```
 
-### 2️⃣ Install dependencies
+### Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3️⃣ Start the API (one command)
+### Start the API (one command)
 
 ```bash
 ./start.sh
@@ -121,7 +121,7 @@ Example response:
 
 ---
 
-## 🧠 How RAG works (high level)
+## How RAG works (high level)
 
 1. Documents are loaded from `app/docs/`
 2. Text is split into chunks
@@ -135,7 +135,7 @@ Example response:
 
 ---
 
-## 📌 Notes
+## Notes
 
 - No OpenAI API key is required
 - Everything runs **locally**
@@ -144,7 +144,7 @@ Example response:
 
 ---
 
-## 🛣️ Possible Improvements
+## Possible Improvements
 
 - Persist FAISS index to disk
 - Add streaming responses
@@ -154,6 +154,6 @@ Example response:
 
 ---
 
-## 👤 Author
+## Author
 
 **Jose Bordón**
