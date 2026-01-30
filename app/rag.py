@@ -14,6 +14,7 @@ from app.loaders import (
 
 # Logging
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -29,14 +30,14 @@ logger.info(f"Using LLM provider: {LLM_PROVIDER}")
 # Factory functions
 
 def get_embeddings():
-    """Return embeddings implementation based on provider."""
     if LLM_PROVIDER == "openai":
+        if not os.getenv("OPENAI_API_KEY"):
+            raise RuntimeError("OPENAI_API_KEY is not set")
+
         from langchain_openai import OpenAIEmbeddings
-        logger.info("Using OpenAI embeddings")
         return OpenAIEmbeddings()
 
     from langchain_ollama import OllamaEmbeddings
-    logger.info("Using Ollama embeddings")
     return OllamaEmbeddings(model=OLLAMA_MODEL)
 
 
