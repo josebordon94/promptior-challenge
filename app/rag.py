@@ -11,26 +11,22 @@ from app.loaders import (
     load_promptior_web_docs,
 )
 
-# --------------------------------------------------
+
 # Logging
-# --------------------------------------------------
 
 logger = logging.getLogger(__name__)
 
-# --------------------------------------------------
-# Environment configuration
-# --------------------------------------------------
 
-LLM_PROVIDER = os.getenv("LLM_PROVIDER")
-if not LLM_PROVIDER:
-    raise RuntimeError("LLM_PROVIDER environment variable must be set")
+# Environment configuration
+
+LLM_PROVIDER: Literal["openai", "ollama"] = os.getenv("LLM_PROVIDER", "openai")
 
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama2")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
-# --------------------------------------------------
+logger.info(f"Using LLM provider: {LLM_PROVIDER}")
+
 # Factory functions
-# --------------------------------------------------
 
 def get_embeddings():
     """Return embeddings implementation based on provider."""
@@ -55,9 +51,8 @@ def get_llm():
     logger.info(f"Using Ollama LLM: {OLLAMA_MODEL}")
     return OllamaLLM(model=OLLAMA_MODEL)
 
-# --------------------------------------------------
+
 # Internal RAG builder
-# --------------------------------------------------
 
 def _build_rag_chain(documents):
     """Core RAG pipeline builder."""
@@ -98,9 +93,7 @@ def _build_rag_chain(documents):
         | StrOutputParser()
     )
 
-# --------------------------------------------------
 # Public API (lazy + cached)
-# --------------------------------------------------
 
 _RAG_CACHE = {}
 
