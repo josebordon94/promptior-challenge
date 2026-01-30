@@ -4,9 +4,11 @@ load_dotenv()
 from fastapi import FastAPI
 from langserve import add_routes
 
-from app.rag import build_rag_chain
+from app.rag import build_rag_chain_from_text
+from app.rag import build_rag_chain_from_web
 
 import os
+
 
 print("Using LLM Provider: ", os.getenv("LLM_PROVIDER"))
 
@@ -16,10 +18,9 @@ app = FastAPI(
     description="RAG-based chatbot using LangChain and Ollama"
 )
 
-rag_chain = build_rag_chain()
+rag_text = build_rag_chain_from_text()
+rag_web = build_rag_chain_from_web()
 
-add_routes(
-    app,
-    rag_chain,
-    path="/chat"
-)
+add_routes(app, rag_text, path="/chat")
+add_routes(app, rag_web, path="/chat-web")
+

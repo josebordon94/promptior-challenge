@@ -4,28 +4,22 @@ from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
-from app.loaders import load_promptior_docs
+from app.loaders import (
+    load_promptior_text_docs,
+    load_promptior_web_docs,
+)
 
-
-# --------------------------------------------------
 # Environment configuration
-# --------------------------------------------------
 
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "ollama")
 
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama2")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
-
-# --------------------------------------------------
 # Factory functions
-# --------------------------------------------------
 
 def get_embeddings():
-    """
-    Returns the appropriate embeddings implementation
-    based on the selected LLM provider.
-    """
+    """Return embeddings based on selected provider."""
     if LLM_PROVIDER == "openai":
         from langchain_openai import OpenAIEmbeddings
         return OpenAIEmbeddings()
@@ -35,56 +29,38 @@ def get_embeddings():
 
 
 def get_llm():
-    """
-    Returns the appropriate LLM implementation
-    based on the selected provider.
-    """
+    """Return LLM based on selected provider."""
     if LLM_PROVIDER == "openai":
         from langchain_openai import ChatOpenAI
         return ChatOpenAI(
             model=OPENAI_MODEL,
-            temperature=0
+            temperature=0,
         )
 
     from langchain_ollama import OllamaLLM
     return OllamaLLM(model=OLLAMA_MODEL)
 
 
-# --------------------------------------------------
-# RAG pipeline
-# --------------------------------------------------
+# Internal RAG builder (shared)
 
-def build_rag_chain():
+
+def _build_rag_chain(documents):
     """
-    Builds a Retrieval-Augmented Generation (RAG) chain.
-
-    Flow:
-    - Load documents
-    - Create embeddings
-    - Build vector store
-    - Retrieve relevant chunks
-    - Inject context into prompt
-    - Generate answer using selected LLM
+    Core RAG pipeline builder.
+    Receives documents and returns a runnable LCEL chain.
     """
 
-    # 1. Load source documents
-    documents = load_promptior_docs()
-
-    # 2. Embeddings
     embeddings = get_embeddings()
 
-    # 3. Vector store (in-memory)
     vectorstore = FAISS.from_documents(
         documents=documents,
-        embedding=embeddings
+        embedding=embeddings,
     )
 
-    # 4. Retriever (top-k similarity search)
     retriever = vectorstore.as_retriever(
         search_kwargs={"k": 3}
     )
 
-    # 5. Prompt template
     prompt = ChatPromptTemplate.from_template(
         """
         You are an assistant answering questions ONLY based on the context below.
@@ -98,18 +74,34 @@ def build_rag_chain():
         """
     )
 
-    # 6. LLM
     llm = get_llm()
 
-    # 7. LCEL chain composition
-    rag_chain = (
+    return (
         {
             "context": retriever,
-            "question": lambda x: x
+            "question": lambda x: x,
         }
         | prompt
         | llm
         | StrOutputParser()
     )
 
-    return rag_chain
+
+# Public RAG builders
+
+def build_rag_chain_from_text():
+    """
+    Primary RAG:
+    Uses Promptior PDF / text content.
+    """
+    documents = load_promptior_text_docs()
+    return _build_rag_chain(documents)
+
+
+def build_rag_chain_from_web():
+    """
+    Secondary RAG (extra points):
+    Uses Promptior website scraping.
+    """
+    documents = load_promptior_web_docs()
+    return _build_rag_chain(documents)
