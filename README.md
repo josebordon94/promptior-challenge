@@ -118,8 +118,16 @@ pip install -r requirements.txt
 
 ### Start the API (one command)
 
+#### Using OpenAI
+
 ```bash
-./start.sh
+./start.openai.sh
+```
+
+#### Using local OLLAMA
+
+```bash
+./start.local.sh
 ```
 
 The API will be available at:
