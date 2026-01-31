@@ -88,10 +88,12 @@ After installing Ollama, pull the required model:
 ollama pull llama2
 ```
 
+- Rename the .env.local.example to .env.local for local OLLAMA using
+
 ### For OpenAI
 
 - An openAI key must be provided in .env.openai
-- Rename the .env.example and change OPENAI_API_KEY value
+- Rename the .env.openai.example to .env.openai and modify OPENAI_API_KEY value
 
 ---
 
